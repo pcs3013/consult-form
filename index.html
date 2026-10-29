@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>상담 신청</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --text: #1c2430; --sub: #5b6675;
+    --line: #dfe3e8; --accent: #1f5eff; --accent-dis: #aab8d6; --warn: #fff3a8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1d2229; --text: #eef1f5; --sub: #9aa5b4;
+            --line: #2f3742; --accent: #5b8cff; --accent-dis: #3a4660; --warn: #5a4f00; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+         line-height: 1.55; }
+  main { max-width: 480px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  .lead { color: var(--sub); margin: 0 0 20px; font-size: 15px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  label.field { display: block; font-weight: 600; font-size: 15px; margin-bottom: 14px; }
+  input[type=text], input[type=tel] {
+    display: block; width: 100%; margin-top: 6px; padding: 13px 12px; font-size: 16px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); }
+  input:focus { outline: 2px solid var(--accent); }
+  .field-label { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+  .field-label small { font-weight: 400; color: var(--sub); margin-left: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { width: auto; margin: 0; padding: 10px 14px; font-size: 15px; font-weight: 500; border-radius: 999px;
+          color: var(--text); background: var(--bg); border: 1px solid var(--line); }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .consent-title { font-weight: 700; font-size: 15px; margin: 22px 0 8px; }
+  .all { display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 8px;
+         background: var(--bg); font-weight: 700; }
+  .item { border-top: 1px solid var(--line); padding: 12px 0; }
+  .item:first-of-type { border-top: 0; }
+  .row { display: flex; gap: 10px; align-items: flex-start; }
+  .row input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
+  .row span { flex: 1; font-size: 15px; }
+  .tag { font-weight: 700; margin-right: 4px; }
+  details { margin: 8px 0 0 28px; font-size: 13px; color: var(--sub); }
+  details summary { cursor: pointer; }
+  details dl { margin: 8px 0 0; }
+  details dt { font-weight: 700; margin-top: 6px; color: var(--text); }
+  details dd { margin: 2px 0 0; }
+  .ph { background: var(--warn); padding: 0 3px; border-radius: 3px; }
+  button { width: 100%; margin-top: 20px; padding: 15px; font-size: 17px; font-weight: 700;
+           border: 0; border-radius: 10px; color: #fff; background: var(--accent); cursor: pointer; }
+  button:disabled { background: var(--accent-dis); cursor: not-allowed; }
+  .note { font-size: 13px; color: var(--sub); margin-top: 12px; }
+  .done { display: none; text-align: center; padding: 30px 10px; }
+  .draft { font-size: 12px; background: var(--warn); padding: 6px 10px; border-radius: 6px; margin-bottom: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>상담 신청</h1>
+  <p class="lead">이름과 전화번호만 남겨 주시면 상담 담당자가 연락드립니다.</p>
+
+  <form id="form" class="card" novalidate>
+    <div id="formBody">
+      <label class="field">이름
+        <input type="text" id="name" name="name" autocomplete="name" placeholder="홍길동" required>
+      </label>
+      <label class="field">전화번호
+        <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="numeric"
+               placeholder="010-0000-0000" required>
+      </label>
+
+      <div class="field-label" id="timeLabel">통화 가능 시간<small>(선택)</small></div>
+      <div class="chips" id="chips" role="group" aria-labelledby="timeLabel">
+        <button type="button" class="chip" aria-pressed="false" data-v="오전 9~12시">오전 9~12시</button>
+        <button type="button" class="chip" aria-pressed="false" data-v="점심 12~13시">점심 12~13시</button>
+        <button type="button" class="chip" aria-pressed="false" data-v="오후 13~18시">오후 13~18시</button>
+        <button type="button" class="chip" aria-pressed="false" data-v="퇴근 후 18~21시">퇴근 후 18~21시</button>
+        <button type="button" class="chip" aria-pressed="false" data-v="주말">주말</button>
+      </div>
+      <p class="note" style="margin-bottom:6px">원하는 시간대가 있으면 눌러 주세요. 선택하지 않으셔도 됩니다. 다시 누르면 선택이 취소됩니다.</p>
+
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
+             style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+
+      <div class="consent-title">개인정보 동의</div>
+      <label class="all"><input type="checkbox" id="all"> 전체 동의 (선택 항목 포함)</label>
+
+      <div class="item">
+        <label class="row">
+          <input type="checkbox" id="c1" required>
+          <span><span class="tag">(필수)</span>상담 목적의 개인정보 수집·이용 동의</span>
+        </label>
+        <details>
+          <summary>자세히 보기</summary>
+          <dl>
+            <dt>수집하는 항목</dt><dd>이름, 휴대전화번호, 통화 가능 시간(선택하신 경우)</dd>
+            <dt>수집·이용 목적</dt><dd>상담 신청 확인 및 상담 연락(전화·문자, 선택하신 통화 가능 시간 반영)</dd>
+            <dt>보유·이용 기간</dt><dd>상담 종료 후 6개월까지 보관하고 지체 없이 파기합니다.</dd>
+            <dt>동의를 거부할 권리</dt><dd>동의를 거부할 수 있습니다. 다만 거부하시면 상담 신청을 하실 수 없습니다.</dd>
+          </dl>
+        </details>
+      </div>
+
+      <div class="item" id="c3wrap">
+        <label class="row">
+          <input type="checkbox" id="c3" required>
+          <span><span class="tag">(필수)</span>개인정보 제3자 제공 동의 (상담사 연결을 위한 것)</span>
+        </label>
+        <details>
+          <summary>자세히 보기</summary>
+          <dl>
+            <dt>제공받는 자</dt><dd>분양 상담을 진행하는 상담사(해당 분양 현장 및 분양대행사 소속)</dd>
+            <dt>제공 항목</dt><dd>이름, 휴대전화번호, 통화 가능 시간(선택하신 경우)</dd>
+            <dt>제공 목적</dt><dd>상담사 연결, 분양 상담 및 방문 예약 안내</dd>
+            <dt>보유·이용 기간</dt><dd>제공 목적 달성 후 6개월까지</dd>
+            <dt>동의를 거부할 권리</dt><dd>동의를 거부할 수 있습니다. 다만 거부하시면 상담사 연결이 어려워 상담 신청을 하실 수 없습니다.</dd>
+          </dl>
+        </details>
+      </div>
+
+      <div class="item">
+        <label class="row">
+          <input type="checkbox" id="c2">
+          <span><span class="tag">(선택)</span>광고·마케팅 정보 수신 동의</span>
+        </label>
+        <details>
+          <summary>자세히 보기</summary>
+          <dl>
+            <dt>수집하는 항목</dt><dd>이름, 휴대전화번호</dd>
+            <dt>이용 목적</dt><dd>신규 분양 정보, 혜택, 행사 안내 등 광고성 정보의 문자·전화 전송, 마케팅 분석 및 맞춤형 광고 활용</dd>
+            <dt>보유·이용 기간</dt><dd>동의 철회 시까지 또는 1년 중 먼저 도래하는 때까지</dd>
+            <dt>동의를 거부할 권리</dt><dd>동의하지 않으셔도 상담 신청에는 아무 불이익이 없습니다. 동의 후에도 문자 하단의 수신거부 번호 또는 010-2068-0180로 언제든 철회할 수 있습니다.</dd>
+          </dl>
+        </details>
+      </div>
+
+      <button type="submit" id="submit" disabled>상담 신청</button>
+      <p class="note">필수 항목에 동의하시면 신청할 수 있습니다. 선택 항목은 동의하지 않아도 됩니다.</p>
+      <p class="note">개인정보 처리 책임자: 시세콕 / 박창선 / 010-2068-0180</p>
+    </div>
+
+    <div class="done" id="done">
+      <h2>신청이 접수됐습니다</h2>
+      <p class="lead">입력하신 번호로 담당자가 연락드립니다.</p>
+    </div>
+  </form>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const CONSENT_VERSION = '2026-10-30-v3'; // 동의 문구를 고칠 때마다 바꾼다(시트에 같이 기록)
+  // 구글 Apps Script 웹 앱 주소(배포 후 받는 주소). 비어 있으면 전송하지 않는다.
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5HWlCR113ylBf2AO171NebNQzE1AkAE0lAtuKeetgvRH-LFLEAdlAo6kTCRt5drR25w/exec';
+  // 유입경로: DM으로 보내는 폼 주소 뒤에 ?src=릴스01_해운대 처럼 붙인다.
+  const SOURCE = new URLSearchParams(location.search).get('src') || '';
+  const name = $('name'), phone = $('phone'), c1 = $('c1'), c2 = $('c2'), c3 = $('c3');
+  const all = $('all'), submit = $('submit');
+
+  // 통화 가능 시간: 선택 사항. 누르면 선택, 다시 누르면 취소. 선택하지 않으면 빈 값('')으로 저장된다.
+  let callTime = '';
+  document.querySelectorAll('.chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const pick = chip.getAttribute('aria-pressed') !== 'true';
+      document.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', 'false'));
+      chip.setAttribute('aria-pressed', String(pick));
+      callTime = pick ? chip.dataset.v : '';
+    });
+  });
+
+  const phoneOk = () => /^01[016789]-?\d{3,4}-?\d{4}$/.test(phone.value.trim());
+  function refresh() {
+    const ok = name.value.trim().length >= 2 && phoneOk() && c1.checked && c3.checked;
+    submit.disabled = !ok;
+    all.checked = c1.checked && c2.checked && c3.checked;
+  }
+  all.addEventListener('change', () => {
+    [c1, c2, c3].forEach((b) => { b.checked = all.checked; });
+    refresh();
+  });
+  [name, phone, c1, c2, c3].forEach((el) => el.addEventListener('input', refresh));
+  phone.addEventListener('input', () => {
+    const d = phone.value.replace(/\D/g, '').slice(0, 11);
+    phone.value = d.length < 4 ? d : d.length < 8 ? d.slice(0, 3) + '-' + d.slice(3)
+      : d.slice(0, 3) + '-' + d.slice(3, d.length - 4) + '-' + d.slice(-4);
+  });
+
+  $('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (submit.disabled) return;
+    // 초안: 실제 전송은 연결하지 않았다. 저장 방식은 정한 뒤에 붙인다.
+    const record = {
+      name: name.value.trim(), phone: phone.value.trim(),
+      consent_service: c1.checked, consent_marketing: c2.checked,
+      consent_third_party: c3.checked,
+      consent_version: CONSENT_VERSION,
+      consented_at: new Date().toISOString(),
+      call_time: callTime,
+      source: SOURCE,
+      website: $('website').value, // 숨은 칸: 사람은 비워 둔다
+    };
+    if (SCRIPT_URL) {
+      submit.disabled = true;
+      try {
+        // Apps Script는 응답을 읽을 수 없는 방식(no-cors)으로 보낸다. 주소·네트워크 오류만 알 수 있다.
+        await fetch(SCRIPT_URL, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(record),
+        });
+      } catch (err) {
+        submit.disabled = false;
+        alert('전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        return;
+      }
+    } else {
+      console.log('신청(초안, 전송 안 함)', record);
+    }
+    $('formBody').style.display = 'none';
+    $('done').style.display = 'block';
+  });
+  refresh();
+</script>
+</body>
+</html>
